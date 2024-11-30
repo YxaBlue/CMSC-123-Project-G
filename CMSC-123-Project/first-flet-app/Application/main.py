@@ -1,20 +1,42 @@
 import flet as ft
-from pages.prescription_page import prescription_page
+from pages.prescription_page import PrescriptionPage
 from pages.landmark_page import landmark_page
 from pages.reminder_page import reminder_page
 from pages.inventory_page import inventory_page
 
 def main(page: ft.Page):
     # Set up the page
-    page.padding = 0
-    page.spacing = 0
+    page.window_width = 414
+    page.window_height = 736
+    page.title = "Medion"
+    
     selected_icon = "Prescription"  # default landing page
+
+    # Create prescription module
+    prescription_module = PrescriptionPage(page)
+    prescription_pages = prescription_module.get_pages()
+
+    # Load other pages
+    landmark = landmark_page()
+    reminder = reminder_page()
+    inventory = inventory_page()
+
+    # Create default app bar 
+    page.appbar = ft.AppBar(
+        leading=ft.Image(src="Medion-Logo.png", width=32, height=32),
+        leading_width=50,
+        title=ft.Text("Medion"),
+        center_title=False,
+        bgcolor=ft.colors.SURFACE_VARIANT,
+        actions=[
+                ft.IconButton(ft.icons.HELP, tooltip=f"Help for Medion")
+        ],
+    )
 
     # Function to handle navigation
     def on_navigation_click(e):
         nonlocal selected_icon  
         # Update the selected icon
-        previous_icon = selected_icon 
         selected_icon = e.control.data  # Update the selected icon string
 
         page.appbar = ft.AppBar(
@@ -66,7 +88,9 @@ def main(page: ft.Page):
         return container
     
     def update_page_content(destination):
-        prescription.visible = destination == "Prescription"
+        # Update visibility for all pages
+        prescription_pages[0].visible = destination == "Prescription"
+        prescription_pages[1].visible = destination == "Prescription" and prescription_module.current_view == "add_prescription"
         landmark.visible = destination == "Landmark"
         reminder.visible = destination == "Reminder"
         inventory.visible = destination == "Inventory"
@@ -98,14 +122,8 @@ def main(page: ft.Page):
         padding=ft.padding.only(top=5, bottom=5),
     )
 
-    # load pages
-    prescription = prescription_page()
-    landmark = landmark_page()
-    reminder = reminder_page()
-    inventory = inventory_page()
-
     content_area = ft.Container(
-        content=ft.Stack([prescription, landmark, reminder, inventory]),
+        content=ft.Stack(prescription_pages + [landmark, reminder, inventory]),
         expand=True,
         padding=ft.padding.only(top=10),
     )

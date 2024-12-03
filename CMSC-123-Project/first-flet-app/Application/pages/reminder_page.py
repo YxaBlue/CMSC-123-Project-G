@@ -12,6 +12,7 @@ def reminder_page():
                     alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                 ),
                 
+                # Create List of Reminder Cards
                 ft.ListView(
                     controls=[
                         ft.Card(
@@ -69,6 +70,69 @@ class Reminder_Page:
 
         # User always lands in appointment sub page when opening Reminder Page
         self.current_view = "Appointment Subpage"
+
+    def _create_reminder_card():
+        return ft.Card(
+            content=ft.Container(
+                content=ft.Column(
+                    controls=[
+                        # Title and Check Button
+                        ft.ListTile(
+                            title=ft.Container(
+                                content=ft.Row(
+                                    controls=[
+                                        ft.Text("Reminder"),
+                                    ],
+                                )
+                            ),
+                            trailing=ft.ElevatedButton("Done")
+                        )
+                    ]
+                )
+            )
+        )
+
+    def _create_reminder_cards_list():
+        return ft.ListView(
+                    controls=[
+                        ft.Card(
+                            content=ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        # Title and Button in a reminder card
+                                        ft.ListTile(
+                                            title=ft.Container(
+                                                content=ft.Row(
+                                                    controls=[
+                                                        ft.Text("Reminder"),
+                                                        ft.ElevatedButton("Check"),
+                                                    ],
+                                                    spacing=5,
+                                                )
+                                            )
+                                        ),
+                                        ft.Container(
+                                            content=ft.Column(
+                                                controls=[
+                                                    ft.Text("Sum reminder hereeee"),
+                                                    ft.Text("Go do check up or soomething")
+                                                ],
+                                                spacing=5,
+                                                horizontal_alignment=ft.CrossAxisAlignment.START,
+                                            ),
+                                            padding=ft.padding.only(left=20)
+                                        ),
+                                    ],
+                                ),
+                                padding=10,
+                            )
+                        )
+                        for i in range(5)
+                    ],
+                    spacing = 10,
+                    height=500,
+                    expand=True
+                )
 
     # Create a list of reminders [Test]
     def _create_reminders_list():

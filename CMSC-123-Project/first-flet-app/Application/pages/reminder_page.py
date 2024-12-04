@@ -7,8 +7,8 @@ def reminder_page():
                 ft.Switch(label="Enable Notifications", value=True),
 
                 ft.Row(
-                    [ft.TextButton(text="Medicine Intake", width=150),
-                     ft.TextButton(text="Appointment", width=150)], 
+                    [ft.ElevatedButton(text="Medicine Intake", width=160),
+                     ft.ElevatedButton(text="Appointment", width=160)], 
                     alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                 ),
                 
@@ -24,26 +24,25 @@ def reminder_page():
                                                 content=ft.Row(
                                                     controls=[
                                                         ft.Text("Reminder"),
-                                                        ft.ElevatedButton("Check"),
                                                     ],
-                                                    spacing=5,
                                                 )
-                                            )
+                                            ),
+                                            trailing=ft.CupertinoCheckbox(value=False),
                                         ),
                                         ft.Container(
                                             content=ft.Column(
                                                 controls=[
                                                     ft.Text("Sum reminder hereeee"),
-                                                    ft.Text("Go do check up or soomething")
+                                                    ft.Text("Go do check up or soomethinglaewn fjlawenfjlawelfnlaw akjnjaherfuoawhruoghawieerfiuawehfiuawheifuhawiuefhiau")
                                                 ],
                                                 spacing=5,
                                                 horizontal_alignment=ft.CrossAxisAlignment.START,
                                             ),
-                                            padding=ft.padding.only(left=20)
+                                            padding=ft.padding.only(left=20, right=20)
                                         ),
                                     ],
                                 ),
-                                padding=10,
+                                padding=ft.padding.symmetric(vertical=10),
                             )
                         )
                         for i in range(5)

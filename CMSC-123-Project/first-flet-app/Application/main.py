@@ -1,7 +1,7 @@
 import flet as ft
 from pages.prescription_page import PrescriptionPage
 from pages.landmark_page import landmark_page
-from pages.reminder_page import reminder_page
+from pages.reminder_page import Reminder_Page # <ISA NEW>
 from pages.inventory_page import inventory_page
 
 def main(page: ft.Page):
@@ -18,7 +18,8 @@ def main(page: ft.Page):
 
     # Load other pages
     landmark = landmark_page()
-    reminder = reminder_page()
+    reminder_instance = Reminder_Page(page)  # Create an instance of Reminder_Page <ISA NEW>
+    reminder = reminder_instance.page_container  # Access its container <ISA NEW>
     inventory = inventory_page()
 
     # Create default app bar 
@@ -94,6 +95,10 @@ def main(page: ft.Page):
         landmark.visible = destination == "Landmark"
         reminder.visible = destination == "Reminder"
         inventory.visible = destination == "Inventory"
+
+        # Automatically show medicine intake reminders when navigating to the reminder page <ISA NEW>
+        if destination == "Reminder":
+            reminder_instance._show_view("Medicine Intake")
 
         # update all icons' appearances
         for icon in navigation_row.controls:

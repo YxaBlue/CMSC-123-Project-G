@@ -1,273 +1,137 @@
 import flet as ft
-from abc import ABC, abstractmethod
+from typing import List
 
-def reminder_page():
-    return ft.Container(
-        content=ft.Column(
-            [
-                ft.Switch(label="Enable Notifications", value=True),
 
-                ft.Row(
-                    [ft.TextButton(text="Medicine Intake", width=150),
-                     ft.TextButton(text="Appointment", width=150)], 
-                    alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                ),
+class Reminder_Card:
+    def __init__(self, title: str, content: str, on_delete: callable):
+        self.title = title
+        self.content = content
+        self.on_delete = on_delete  # Callback for deleting the card
+        self.chk_btn = ft.Checkbox(value=False, on_change=self._on_checked)
+        self.card = self._create_reminder_card()
 
-                # Create List of Reminder Cards
-                ft.ListView(
+    def _on_checked(self, e):
+        if e.control.value:  # If checkbox is checked
+            self.on_delete(self)
+
+    def _create_reminder_card(self):
+        return ft.Card(
+            content=ft.Container(
+                content=ft.Column(
                     controls=[
-                        ft.Card(
-                            content=ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        ft.ListTile(
-                                            title=ft.Container(
-                                                content=ft.Row(
-                                                    controls=[
-                                                        ft.Text("Reminder"),
-                                                        ft.CupertinoCheckbox("Check", disabled=True, right=100),
-                                                    ],
-                                                    spacing=5,
-                                                )
-                                            )
-                                        ),
-                                        ft.Container(
-                                            content=ft.Column(
-                                                controls=[
-                                                    ft.Text("Sum reminder hereeee"),
-                                                    ft.Text("Go do check up or soomething")
-                                                ],
-                                                spacing=5,
-                                                horizontal_alignment=ft.CrossAxisAlignment.START,
-                                            ),
-                                            padding=ft.padding.only(left=20)
-                                        ),
-                                    ],
-                                ),
-                                padding=10,
-                            )
-                        )
-                        for i in range(5)
+                        # Title of Reminder Card + Checkbox
+                        ft.ListTile(
+                            title=ft.Text(self.title),
+                            trailing=self.chk_btn,
+                        ),
+                        # Content of Reminder Card
+                        ft.Container(
+                            content=ft.Text(self.content),
+                            padding=ft.padding.only(left=20, right=20),
+                        ),
                     ],
-                    spacing = 10,
-                    height=500,
-                    expand=True
-                )
-            ],
-            spacing=10,
-            alignment=ft.MainAxisAlignment.START,
-        ),
-
-
-        visible=False
-    )
-
-
-
-
-
-
-
-class Reminder_Card(ABC):
-    @abstractmethod
-    def remove(self):
-        pass
-
-    @abstractmethod
-    def __create_reminder_card(self):
-        pass
-
-
-class Appointments_Card(Reminder_Card):
-    def __init__(self, title:str, content):
-        self.__CardTitle = title
-        self.__content = content
-        self.__card = self.__create_reminder_card()
-
-    def __create_reminder_card(self):
-        return ft.Card(
-            content=ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            # Title of Reminder Card + Cupertino Check box
-                            ft.ListTile(
-                                title=ft.Container(
-                                    content=ft.Row(
-                                        controls=[
-                                            ft.Text(self.__CardTitle),
-                                        ],
-                                    )
-                                ),
-                                trailing=ft.CupertinoCheckbox(value=False),
-                            ),
-
-                            # Contents of a reminder card
-                            ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        ft.Text(self.__content),
-                                    ],
-                                    spacing=5,
-                                    horizontal_alignment=ft.CrossAxisAlignment.START,
-                                ),
-                                padding=ft.padding.only(left=20, right=20)
-                            ),
-                        ],
-                    ),
-                    
-                    padding=ft.padding.symmetric(vertical=5),
-                )
+                ),
+                padding=ft.padding.symmetric(vertical=5),
+            )
         )
 
-    def remove(self):
-        # This is a deconstructor
-        # Will figure out 
-        
-        # When reminder is checked out
-        # This should delete the reminder card and possibly delete the description
-        # Another alternative for the sake of file logging, we could add a member
-        # variable presciption indicating that the reminder is done
-        pass
+    def get(self):
+        return self.card
 
-
-class MedIntake_Card(Reminder_Card):
-    def __init__(self, title:str, content):
-        self.__CardTitle = title
-        self.__content = content
-        self.__card = self.__create_reminder_card() 
-
-    def __create_reminder_card(self):
-        return ft.Card(
-            content=ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            # Title of Reminder Card + Cupertino Check box
-                            ft.ListTile(
-                                title=ft.Container(
-                                    content=ft.Row(
-                                        controls=[
-                                            ft.Text(self.__CardTitle),
-                                        ],
-                                    )
-                                ),
-                                trailing=ft.CupertinoCheckbox(value=False, check_color=ft.colors.BLUE_ACCENT_100, right=100),
-                                
-                            ),
-
-                            # Contents of a reminder card
-                            ft.Container(
-                                content=ft.Column(
-                                    controls=[
-                                        ft.Text(self.__content),
-                                    ],
-                                    spacing=5,
-                                    horizontal_alignment=ft.CrossAxisAlignment.START,
-                                ),
-                                padding=ft.padding.only(left=20, right=20)
-                            ),
-                        ],
-                    ),
-                    
-                    padding=ft.padding.symmetric(vertical=5),
-                )
-        )
-
-    def remove(self):
-        # This is a deconstructor
-        # Will figure out 
-        
-        # When reminder is checked out
-        # This should delete the reminder card and possibly delete the description
-        # Another alternative for the sake of file logging, we could add a member
-        # variable presciption indicating that the reminder is done
-        pass
 
 
 
 class Reminder_Page:
-    # Function to initialize Reminder Page
     def __init__(self, page: ft.Page):
         self.page = page
-        self.page_container = self.__create_Reminder_page()
-        # User always lands in appointment sub page when opening Reminder Page
-        self.current_view = "Medicine Intake Subpage"
+        self.current_view = "Medicine Intake"  # Default view
+        self.reminder_cards = []  # List of current reminders
+
+        self.notification_switch = ft.Switch(label="Enable Notifications", value=True)
+        self.medicine_button = ft.TextButton(
+            text="Medicine Intake",
+            width=150,
+            on_click=lambda e: self._show_view("Medicine Intake"),
+        )
+        self.appointment_button = ft.TextButton(
+            text="Appointment",
+            width=150,
+            on_click=lambda e: self._show_view("Appointment"),
+        )
+
+        self.reminder_list_view = ft.ListView(
+            spacing=10, height=500, expand=True
+        )
+        self.page_container = self._create_reminder_page()
 
 
-
-    #-------------------------------------------------------------------------------------------------#
-    ## --------------------------------- FOR FUNCTIONALITY OF UI ----------------------------------- ##
-    #-------------------------------------------------------------------------------------------------#
-    
-
-
-
-
-
-
-    #-------------------------------------------------------------------------------------------------#
-    ## --------------------------------- FOR FUNCTIONALITY OF UI ----------------------------------- ##
-    #-------------------------------------------------------------------------------------------------#
-    # Creates a list of reminder cards to be displayed
-    # Needed to modify so that it accepts the details of prescription from files
-    def __create_reminder_cards_list(self, newCard:Reminder_Card):
-        return ft.ListView(
-                    controls=[
-                            newCard
-                            for i in range(5)
-                    ],
-                    spacing=10,
-                    height=500,
-                    expand=True
-                )
-    
-
-    #
-    def __create_Reminder_page(self):
-        # For buttons' functionality
-        def show_MedIntake_Subpage(self):
-            pass
+    def _add_reminder(self, title: str, content: str):
+        # Add a new reminder card
+        reminder_card = Reminder_Card(
+            title,
+            content,
+            on_delete=self._delete_reminder,
+        )
+        self.reminder_cards.append(reminder_card)
+        self.reminder_list_view.controls.append(reminder_card.get())
+        self.page.update()
 
 
-        # Create buttons for clicking and ticking events
-        MedIntake_Subpage_btn = ft.ElevatedButton("Medicine Intake", width=160)
-        Appointment_Subpage_btn = ft.ElevatedButton("Appointment", width=160)
-        Reminder_ChckBox = ft.CupertinoCheckbox
+    def _delete_reminder(self, reminder_card):
+        # Delete a specific reminder card
+        self.reminder_cards.remove(reminder_card)
+        self.reminder_list_view.controls.remove(reminder_card.get())
+        self.page.update()
 
 
-        # For validation
-        def reminder_Done(self):
-            pass
+    def _show_view(self, view_name: str):
+        self.current_view = view_name
+        # Clear existing list view and load new reminders
+        self.reminder_list_view.controls.clear()
+        if view_name == "Medicine Intake":
+            self._load_medicine_reminders()
+        elif view_name == "Appointment":
+            self._load_appointment_reminders()
+        self.page.update()
 
+    def _load_medicine_reminders(self):
+        # Load medicine reminders (example data)
+        reminders = [
+            ("Take morning pills", "8:00 AM"),
+            ("Take vitamins", "12:00 PM"),
+        ]
+        for title, content in reminders:
+            self._add_reminder(title, content)
 
+    def _load_appointment_reminders(self):
+        # Load appointment reminders (example data)
+        reminders = [
+            ("Visit Dr. Smith", "3:00 PM"),
+            ("Dental check-up", "10:00 AM"),
+        ]
+        for title, content in reminders:
+            self._add_reminder(title, content)
+
+    def _create_reminder_page(self):
+        # Create Reminder Page layout
         return ft.Container(
             content=ft.Column(
-                [
-                    ft.Switch(label="Enable Notifications", value=True),
-
+                controls=[
+                    # Enable Notifications Switch
+                    self.notification_switch,
+                    # Buttons for Medicine and Appointment
                     ft.Row(
-                        [ft.ElevatedButton(text="Medicine Intake", width=160),
-                        ft.ElevatedButton(text="Appointment", width=160)], 
+                        controls=[
+                            self.medicine_button,
+                            self.appointment_button,
+                        ],
                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                     ),
-                    
-                    # Create List of Reminder Cards
-                    ft.ListView(
-                        controls=[
-
-                        ],
-                        spacing = 10,
-                        height=500,
-                        expand=True
-                    )
+                    # Reminder List
+                    self.reminder_list_view,
                 ],
                 spacing=10,
                 alignment=ft.MainAxisAlignment.START,
             ),
-
-            visible=False
+            visible=False,
         )
-    
-
-
-    
-        

@@ -25,7 +25,7 @@ def reminder_page():
                                                 content=ft.Row(
                                                     controls=[
                                                         ft.Text("Reminder"),
-                                                        ft.ElevatedButton("Check"),
+                                                        ft.CupertinoCheckbox("Check", disabled=True, right=100),
                                                     ],
                                                     spacing=5,
                                                 )
@@ -76,6 +76,7 @@ class Reminder_Card(ABC):
     @abstractmethod
     def __create_reminder_card(self):
         pass
+
 
 class Appointments_Card(Reminder_Card):
     def __init__(self, title:str, content):
@@ -128,6 +129,7 @@ class Appointments_Card(Reminder_Card):
         # variable presciption indicating that the reminder is done
         pass
 
+
 class MedIntake_Card(Reminder_Card):
     def __init__(self, title:str, content):
         self.__CardTitle = title
@@ -148,7 +150,8 @@ class MedIntake_Card(Reminder_Card):
                                         ],
                                     )
                                 ),
-                                trailing=ft.CupertinoCheckbox(value=False),
+                                trailing=ft.CupertinoCheckbox(value=False, check_color=ft.colors.BLUE_ACCENT_100, right=100),
+                                
                             ),
 
                             # Contents of a reminder card
@@ -186,9 +189,9 @@ class Reminder_Page:
     def __init__(self, page: ft.Page):
         self.page = page
         self.page_container = self.__create_Reminder_page()
-
         # User always lands in appointment sub page when opening Reminder Page
-        self.current_view = "Appointment Subpage"
+        self.current_view = "Medicine Intake Subpage"
+
 
 
     #-------------------------------------------------------------------------------------------------#

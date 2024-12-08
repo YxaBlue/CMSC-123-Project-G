@@ -1,19 +1,12 @@
 import flet as ft
 from typing import List
 import json
-from datetime import date, timedelta
 
-
-#-----------------------------------------------------------#
-# Access contents from prescriptions.json
 file_path = "prescriptions.json"
+
 with open(file_path, 'r') as file:
     data = json
 
-
-
-#-----------------------------------------------------------#
-# Reminder Cards class to show for the Reminders Page
 class Reminder_Card:
     def __init__(self, title: str, content: str, on_delete: callable):
         self.title = title
@@ -49,42 +42,6 @@ class Reminder_Card:
 
     def get(self):
         return self.card
-
-
-class Appointment_Card(Reminder_Card):
-    def __init__(self, doctorName:str, appointmentDate:date, appointmentTime:timedelta, on_delete:callable):
-        self.doctor_Name = doctorName
-        self.appointment_Date = appointmentDate
-        self.appointmentTime = appointmentTime
-        self.on_delete = on_delete
-        self.chk_btn = ft.Checkbox(value=False, on_change=self._on_checked)
-        self.card = self._create_reminder_card()
-
-    # If checkbox is checked
-    def _on_checked(self, e):
-        if e.control.value:
-            self.on_delete(self)
-
-    def _create_reminder_card(self):
-        return ft.Card(
-            content=ft.Container(
-                content=ft.Column(
-                    controls=[
-                        # Title of Reminder Card + Checkbox
-                        ft.ListTile(
-                            title=ft.Text("Incoming Appointment!"),
-                            trailing=self.chk_btn,
-                        ),
-                        # Content of Reminder Card
-                        ft.Container(
-                            content=ft.Text("You have an appointment with %s on %s, %s" % (self.doctor_Name, self.appointment_Date, self.appointmentTime)),
-                            padding=ft.padding.only(left=20, right=20),
-                        ),
-                    ],
-                ),
-                padding=ft.padding.symmetric(vertical=5),
-            ),
-        )
 
 
 #--------------- DATA STRUCTURE: LINKED LIST ---------------#
@@ -156,7 +113,7 @@ class Reminder_Page:
     def __init__(self, page: ft.Page):
         self.page = page
         self.current_view = "Medicine Intake"  # Default view
-        self._Reminders_List_SLL = LinkedList()
+        self.reminder_cards = []  # List of current reminders
 
         self.notification_switch = ft.Switch(label="Enable Notifications", value=True)
         self.medicine_button = ft.TextButton(
@@ -246,3 +203,9 @@ class Reminder_Page:
             ),
             visible=False,
         )
+
+
+
+
+
+

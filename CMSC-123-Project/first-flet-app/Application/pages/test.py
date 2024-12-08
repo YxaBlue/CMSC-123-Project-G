@@ -203,9 +203,3 @@ class Reminder_Page:
             ),
             visible=False,
         )
-
-
-
-
-
-
